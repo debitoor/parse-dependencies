@@ -1,0 +1,26 @@
+{
+  "name": "parse-dependencies",
+  "version": "0.1.1",
+  "description": "finding node code dependencies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/debitoor/find-dependencies.git"
+  },
+  "keywords": [
+    "dependencies",
+    "find"
+  ],
+  "author": "Debitoor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/debitoor/find-dependencies/issues"
+  },
+  "homepage": "https://github.com/debitoor/find-dependencies",
+  "dependencies": {
+    "async": "^1.4.2"
+  }
+}
