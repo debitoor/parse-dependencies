@@ -22,7 +22,7 @@ parse(__dirname + '/server.js', function (err, deps) {
     return !(item in packageDeps);
   });
   if (diff.length) {
-    console.log('oops. You have missing depencies');
+    console.log('oops. You have missing depencies\n%s', diff.join());
   }
 });
 ```
