@@ -1,4 +1,5 @@
 var fs = require('fs');
+var normalize = require('path').normalize;
 var async = require('async');
 var builtin = process.binding('natives')
 var getDirname = require('path').dirname;
@@ -24,14 +25,17 @@ function group(file, deps) {
 		})
 		.map(function (item) {
 			return dir + '/' + item;
-		});
+		})
+		.map(normalize);
 	var external = notBuildin
 		.filter(function (item) {
 			return item[0] !== '.';
 		})
 		.map(function (item) {
 			return item.split('/')[0];
-		});
+		})
+		.map(normalize);
+
 	return {
 		internal: internal,
 		external: external
@@ -40,14 +44,18 @@ function group(file, deps) {
 
 function find(file, cb) {
 	var resolved = [];
-	return resolve(file, cb);
+	return resolve(normalize(file), cb);
 
 	function resolve(file, cb) {
-		var path = require.resolve(file);
+		var path
+		try {
+			path = require.resolve(file);
+		} catch (e) {
+			return cb(e);
+		};
 		if (resolved.indexOf(path) !== -1) {
 			return cb(null, []);
 		}
-		resolved.push(path);
 
 		fs.readFile(path, function (err, src) {
 			if (err) {
@@ -59,7 +67,7 @@ function find(file, cb) {
 
 			async.mapLimit(groups.internal, 10, resolve, function (err, result) {
 				if (err) {
-					return cb(err);
+					return cb(new Error(err.message + ' at ' + file));
 				}
 				var uniqDeps = Array.prototype.concat.apply(groups.external, result)
 					.filter(function (item, index, arr) {
