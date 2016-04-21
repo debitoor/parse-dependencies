@@ -56,6 +56,7 @@ function find(file, cb) {
 		if (resolved.indexOf(path) !== -1) {
 			return cb(null, []);
 		}
+		resolved.push(path)
 
 		fs.readFile(path, function (err, src) {
 			if (err) {
