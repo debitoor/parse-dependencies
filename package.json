@@ -1,10 +1,11 @@
 {
-  "name": "parse-dependencies",
-  "version": "0.2.1",
+  "name": "@debitoor/parse-dependencies",
+  "version": "1.0.0",
   "description": "finding node code dependencies",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "istanbul cover _mocha",
+    "coveralls": "coveralls < ./coverage/lcov.info || echo 'problem with reporting to coveralls'"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,18 @@
   },
   "homepage": "https://github.com/debitoor/find-dependencies",
   "dependencies": {
-    "async": "^1.4.2"
-  }
+    "async": "2.5.0"
+  },
+  "devDependencies": {
+    "@debitoor/eslint-config-debitoor": "1.5.0",
+    "@debitoor/mocha-strict-dependencies": "1.1.0",
+    "chai": "4.1.0",
+    "coveralls": "2.13.1",
+    "istanbul": "0.4.5",
+    "mocha": "3.4.2",
+    "mocha-eslint": "4.0.0"
+  },
+  "files": [
+    "index.js"
+  ]
 }

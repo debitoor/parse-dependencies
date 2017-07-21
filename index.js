@@ -1,25 +1,28 @@
-var fs = require('fs');
-var normalize = require('path').normalize;
-var async = require('async');
-var builtin = process.binding('natives')
-var getDirname = require('path').dirname;
+const fs = require('fs');
+const normalize = require('path').normalize;
+const async = require('async');
+const builtin = process.binding('natives');
+const getDirname = require('path').dirname;
 
 function parse(src) {
-	var re = /require\((['"])(.*)\1\)/g;
-	var deps = [];
-	var match;
-	while ((match = re.exec(src))) {
+	const commentRegexp = /\/\*(.*?)\*\/|\/\/(.*?)(\n|$)/g;
+	const dependencyRegexp = /require\((['"])(.*)\1\)/g;
+
+	src = src.replace(commentRegexp, '');
+	const deps = [];
+	let match;
+	while ((match = dependencyRegexp.exec(src))) {
 		deps.push(match[2]);
 	}
 	return deps;
 }
 
 function group(file, deps) {
-	var dir = getDirname(file);
-	var notBuildin = deps.filter(function (item) {
+	const dir = getDirname(file);
+	const notBuildin = deps.filter(function (item) {
 		return !(item in builtin);
 	});
-	var internal = notBuildin
+	const internal = notBuildin
 		.filter(function (item) {
 			return item[0] === '.';
 		})
@@ -27,7 +30,7 @@ function group(file, deps) {
 			return dir + '/' + item;
 		})
 		.map(normalize);
-	var external = notBuildin
+	const external = notBuildin
 		.filter(function (item) {
 			return item[0] !== '.';
 		})
@@ -43,34 +46,34 @@ function group(file, deps) {
 }
 
 function find(file, cb) {
-	var resolved = [];
+	const resolved = [];
 	return resolve(normalize(file), cb);
 
 	function resolve(file, cb) {
-		var path
+		let path;
 		try {
 			path = require.resolve(file);
 		} catch (e) {
 			return cb(e);
-		};
+		}
 		if (resolved.indexOf(path) !== -1) {
 			return cb(null, []);
 		}
-		resolved.push(path)
+		resolved.push(path);
 
 		fs.readFile(path, function (err, src) {
 			if (err) {
 				return cb(err);
 			}
 
-			var deps = parse(src.toString());
-			var groups = group(path, deps);
+			const deps = parse(src.toString());
+			const groups = group(path, deps);
 
 			async.mapLimit(groups.internal, 10, resolve, function (err, result) {
 				if (err) {
 					return cb(new Error(err.message + ' at ' + file));
 				}
-				var uniqDeps = Array.prototype.concat.apply(groups.external, result)
+				const uniqDeps = Array.prototype.concat.apply(groups.external, result)
 					.filter(function (item, index, arr) {
 						return arr.indexOf(item) === index; // only uniq items
 					});
