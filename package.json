@@ -1,6 +1,6 @@
 {
   "name": "@debitoor/parse-dependencies",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "finding node code dependencies",
   "main": "index.js",
   "scripts": {
